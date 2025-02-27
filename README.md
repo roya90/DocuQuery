@@ -52,8 +52,10 @@ This repository contains a robust pipeline for a document question-answering sys
     gcloud auth application-default login
 
 
+4. **Set Up Google Cloud Project**:
 
-Add your Gemini project and location to the environment: 
+    Add your Gemini project and location to the environment: 
+
     ```bash
     echo 'export GOOGLE_PROJECT=<your_google_project_id>' >> ~/.zshrc                            
     echo 'export GOOGLE_LOCATION=<your_google_project_location>' >> ~/.zshrc

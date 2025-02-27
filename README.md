@@ -1,53 +1,118 @@
-# DocuQuery
+# **Document Question-Answering System with Explainability**
 
-DocuQuery is a Python-based document processing tool that enables users to extract and query text from PDF documents using large language models (LLMs). It provides functionalities for document parsing, text chunking, vector database operations, and natural language querying.
+This repository contains a robust pipeline for a document question-answering system that utilizes AI to extract, process, and query documents. The system ensures explainability, relevance checking, and compliance with predefined guardrails for safe and responsible AI usage.
 
-## Features
-- Extract text from PDFs efficiently.
-- Chunk extracted text for optimal processing.
-- Store and retrieve document embeddings using a vector database.
-- Query documents using LLMs to answer specific questions based on their content.
+---
 
-## Installation
-To install the required dependencies, run:
-```bash
-pip install -r requirements.txt
+## **Features**
+
+1. **PDF Extraction**: Extracts text from legal documents using `PyMuPDF` (fitz).
+2. **Smart Chunking**: Processes text into meaningful paragraphs using `spaCy` and filters out irrelevant content.
+3. **Embedding Generation**: Generates semantic embeddings for text chunks using `SentenceTransformer` models.
+4. **Vector Database with FAISS**: Efficiently stores and retrieves text chunks based on cosine similarity.
+5. **Relevance Checking**: Ensures only relevant chunks are queried, with customizable thresholds.
+6. **LLM Integration**: Leverages Gemini Flash or other text-generation models to answer user questions.
+7. **Guardrails for Restricted Topics**:
+   - Blocks queries involving predefined restricted topics (e.g., politics, confidential information).
+   - Responds with appropriate messages for unrelated or restricted queries.
+8. **Explainability**: Outputs relevant text chunks, including metadata like section and page numbers, to justify answers.
+
+---
+
+## **Installation**
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/roya90/DocuQuery.git
+   cd DocuQuery
+
+
+2. **Set Up a Virtual Environment**:
+   ```bash
+   
+   #On macOS/Linux:
+   python3 -m venv venv
+   source venv/bin/activate 
+
+   #On Windows:
+   python -m venv venv
+   venv\Scripts\activate 
+    
+
+3. **Install Dependencies**:
+
+    ```bash
+    pip install -r requirements.txt
+
+4. **Set Up Gemini Flash**:
+
+    Authenticate your Gemini Flash:
+    ```bash
+    pip install --upgrade google-genai
+    gcloud auth application-default login
+
+    Add your Gemini project and location to the environment: 
+    ```bash
+    echo 'export GOOGLE_PROJECT=<your_google_project_id>' >> ~/.zshrc                            
+    echo 'export GOOGLE_LOCATION=<your_google_project_location>' >> ~/.zshrc
+    source ~/.zshrc
+    
+---
+## **Usage**
+**Run the System**:
+```bash 
+python question-answering.py <path_to_pdf> "<query_text>"
 ```
 
-## Usage
-### 1. Extract Text from a PDF
-Use the `pdf_text_extractor.py` script to extract text from a given PDF file.
-```bash
-python pdf_text_extractor.py --file path/to/document.pdf
+**Examples:**
+```bash 
+python question-answering.py "document.pdf" "can I return a swimsuit?"
 ```
-
-### 2. Chunk Extracted Text
-Use the `text_chunker.py` script to divide extracted text into manageable chunks for further processing.
-```bash
-python text_chunker.py --input path/to/text.txt --output path/to/chunks.json
+---
+## **Project Structure**
 ```
-
-### 3. Store and Query Documents
-Convert text chunks into embeddings and store them in a vector database using `vector_db_utils.py`.
-```bash
-python vector_db_utils.py --store path/to/chunks.json
+├── pdf_text_extractor.py         # Extracts text from PDF documents
+├── text_chunker.py               # Splits text into meaningful chunks (paragraphs)
+├── vector_db_utils.py            # Handles FAISS indexing and querying
+├── query_llm.py                  # Interacts with the LLM for answering questions
+├── question-answering.py         # Main script for running the pipeline
+├── requirements.txt              # Dependencies for the project
+└── README.md                     # Documentation
 ```
-To query the document:
-```bash
-python query_llm.py --question "What is the main topic of this document?"
-```
+---
+## **Pipeline Workflow**
 
-### 4. Question Answering
-Ask specific questions from the documents using `question_answering.py`.
-```bash
-python question_answering.py --file path/to/document.pdf --question "What is the key finding of this document?"
-```
+1. Extract Text:
 
-## Requirements
-- Python 3.8+
-- Dependencies listed in `requirements.txt`
-- A configured LLM API key (for querying)
+    - Extract text from the PDF.
+2. Chunking:
 
+    - Split the text into meaningful paragraphs, filtering irrelevant data.
+3. Embedding and Indexing:
+
+    - Generate semantic embeddings for the text chunks.
+    - Store embeddings in FAISS for efficient retrieval.
+4. Query Handling:
+
+    - Check if the query relates to restricted topics.
+    - If valid, retrieve the most relevant chunks using FAISS.
+
+5. Answer Generation:
+
+    - Use an LLM (e.g., Gemini Flash) to generate answers based on the retrieved chunks.
+    - Include metadata (e.g., section) in the output for explainability.
+
+---
+## **Known Issues**
+**Restricted Query Handling:**
+
+Current topic filtering is keyword-based. Enhancements like semantic topic detection can improve accuracy.
+
+**Large PDF Handling:**
+
+Processing very large documents may require additional optimization (e.g., batching chunks).
+
+---
 ## Future Improvements
 - Implement a web-based interface for document querying.
 - Support for additional document formats (e.g., DOCX, TXT).

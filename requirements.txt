@@ -1,0 +1,4 @@
+PyMuPDF
+spacy
+transformers
+faiss-cpu
